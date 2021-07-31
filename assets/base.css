@@ -1,0 +1,146 @@
+.hidden {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+  word-wrap: normal !important;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+  font-size: 62.5%;
+  height: 100%;
+}
+:root {
+  --serif: serif;
+  --sans: Arial;
+  --mono: monospace;
+  
+  --main-color: #018136;
+
+  --bg: #F4F4F4;
+  --bg-variant: #FFFFF8;
+  --base-color: #FBFCFA; 
+
+  --font-size-xs: 80%;
+  --font-size-s: 100%;
+  --font-size-m: 150%;
+  --font-size-l: 300%;
+  --font-size-xl: 500%;
+
+}
+
+.xs {
+  font-size: var(--font-size-xs);
+}
+.s {
+  font-size: var(--font-size-s);
+}
+.m {
+  font-size: var(--font-size-m);
+}
+.l {
+  font-size: var(--font-size-l);
+}
+.xl {
+  font-size: var(--font-size-xl);
+}
+
+
+body {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  grid-template-columns: 100%;
+  min-height: 100%;
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: 0.06rem;
+  line-height: 1.8;
+  font-family: var(--mono);
+  color: var(--main-color);
+  background-color: var(--base-color);
+}
+
+@media screen and (min-width: 750px) {
+  body {
+    font-size: 1.6rem;
+  }
+}
+
+a {
+  color: unset;
+  text-decoration: none;
+}
+
+.unstyled-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.flex-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Cards on PLP and CLP */
+.card {
+  display: flex;
+  flex-direction: column;
+  margin: 2rem;
+  padding: 1rem;
+  width: calc((100vw / 3) - 2rem);
+}
+
+.card-image-wrapper {
+  width: 100%;
+  background-color: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 23px;
+}
+
+.card-img {
+  height: 18em;
+}
+
+.headline {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: normal;
+  margin: 0;
+}
+
+#shopify-section-header {
+  z-index: 3;
+  will-change: transform;
+}
+
+.shopify-section-header-sticky {
+  position: sticky;
+  top: 0;
+}
+
+.shopify-section-header-hidden {
+  transform: translateY(-100%);
+}
+
+#shopify-section-header.animate {
+  transition: transform 0.15s ease-out;
+}

@@ -1,10 +1,10 @@
 {
   "sections": {
-    "main": {
-      "type": "placeholder"
+    "landing": {
+      "type": "form-landing"
     }
   },
   "order": [
-    "main"
+    "landing"
   ]
 }

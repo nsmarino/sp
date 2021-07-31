@@ -1,0 +1,10 @@
+<h1>plp</h1>
+<ul class="unstyled-list flex-row">
+  {%- for product in collection.products -%}
+  <li>
+    {% render 'plp-card',
+      product: product,
+    %}
+  </li>
+  {%- endfor -%}
+</ul>

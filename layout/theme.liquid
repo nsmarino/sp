@@ -9,12 +9,40 @@
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
     <title>{{ page_title }}</title>
     <meta name="description" content="{{ page_description | escape }}">
+    <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
+    {{ 'base.css' | asset_url | stylesheet_tag }}
     {{ content_for_header }}
   </head>
 
-  <body>
+  <body>    
+    <a class="skip-to-content-link button visually-hidden" href="#MainContent">Skip to text</a>
+    {% section 'header' %}
+
     <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
       {{ content_for_layout }}
     </main>
+
+    {% section 'footer' %}
+    <ul hidden>
+      <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>
+    </ul>
+    <script>
+      window.routes = {
+        cart_add_url: '{{ routes.cart_add_url }}',
+        cart_change_url: '{{ routes.cart_change_url }}',
+        cart_update_url: '{{ routes.cart_update_url }}'
+      };
+
+      window.cartStrings = {
+        error: `There is an issue with the cart.`,
+        quantityError: `There is an issue with the quantity.`
+      }
+
+      window.variantStrings = {
+        addToCart: `Add to cart`,
+        soldOut: `Sold out`,
+        unavailable: `Unavailable`,
+      }
+    </script>
   </body>
 </html>

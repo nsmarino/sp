@@ -1,0 +1,287 @@
+
+<script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
+
+<{% if section.settings.enable_sticky_header %}sticky-header{% else %}div{% endif %} class="header-wrapper{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}">
+<header class="sp-header">
+  <a href="/" class="sp-header-logo"><img src='https://cdn.shopify.com/s/files/1/0583/3202/0894/files/Group_127logo.png?v=1627426236' alt="Sweet Pickle Books"></a>
+  <a href="/pages/about">About</a>
+  <a href="/collections/all">Shop</a>
+  <a href="/pages/contact">Request a Book</a>
+  <a href="/pages/pre-order">Pre-Order</a>
+  <a href="/blogs/news">Blog</a>
+  <form action="{{ routes.search_url }}" class="sp-header-search" method="get" role="search">
+    <div class="field">
+      <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'general.search.search' | t }}">
+      <input type="hidden" name="options[prefix]" value="last">
+      <button aria-label="search">
+        <svg aria-hidden="true" focusable="false" role="presentation">
+          <use href="#icon-search">
+        </svg>
+      </button>
+    </div>
+  </form> 
+    <!-- Cart icon -->
+    <a href="{{ routes.cart_url }}" class="sp-cart-icon">
+      <img src="https://cdn.shopify.com/s/files/1/0583/3202/0894/files/sp-cart-icon.svg?v=1627427016" alt="cart">
+    </a>
+</header>
+</{% if section.settings.enable_sticky_header %}sticky-header{% else %}div{% endif %}>
+
+{%- if request.page_type != 'cart' -%}
+  {%- render 'cart-notification' -%}
+{%- endif -%}
+
+{% javascript %}
+  class StickyHeader extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      this.header = document.getElementById('shopify-section-header');
+      console.log(this.header)
+      this.headerBounds = {};
+      this.currentScrollTop = 0;
+
+      this.onScrollHandler = this.onScroll.bind(this);
+
+      window.addEventListener('scroll', this.onScrollHandler, false);
+
+      this.createObserver();
+    }
+
+    disconnectedCallback() {
+      window.removeEventListener('scroll', this.onScrollHandler);
+    }
+
+    createObserver() {
+      let observer = new IntersectionObserver((entries, observer) => {
+        this.headerBounds = entries[0].intersectionRect;
+        observer.disconnect();
+      });
+
+      observer.observe(this.header);
+    }
+
+    onScroll() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (scrollTop > this.currentScrollTop && scrollTop > this.headerBounds.bottom) {
+        requestAnimationFrame(this.hide.bind(this));
+      } else if (scrollTop < this.currentScrollTop && scrollTop > this.headerBounds.bottom) {
+        requestAnimationFrame(this.reveal.bind(this));
+      } else if (scrollTop <= this.headerBounds.top) {
+        requestAnimationFrame(this.reset.bind(this));
+      }
+
+      this.currentScrollTop = scrollTop;
+    }
+
+    hide() {
+      this.header.classList.add('shopify-section-header-hidden', 'shopify-section-header-sticky');
+      this.closeMenuDisclosure();
+      this.closeSearchModal();
+    }
+
+    reveal() {
+      this.header.classList.add('shopify-section-header-sticky', 'animate');
+      this.header.classList.remove('shopify-section-header-hidden');
+    }
+
+    reset() {
+      this.header.classList.remove('shopify-section-header-hidden', 'shopify-section-header-sticky', 'animate');
+    }
+
+    closeMenuDisclosure() {
+      this.disclosures = this.disclosures || this.header.querySelectorAll('details-disclosure');
+      this.disclosures.forEach(disclosure => disclosure.close());
+    }
+
+    closeSearchModal() {
+      this.searchModal = this.searchModal || this.header.querySelector('details-modal');
+      this.searchModal.close(false);
+    }
+  }
+
+  customElements.define('sticky-header', StickyHeader);
+{% endjavascript %}
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    {% if section.settings.logo %}
+      {% assign image_size = section.settings.logo.width | append: 'x' %}
+      "logo": {{ section.settings.logo | img_url: image_size | prepend: "https:" | json }},
+    {% endif %}
+    "sameAs": [
+      {{ settings.social_twitter_link | json }},
+      {{ settings.social_facebook_link | json }},
+      {{ settings.social_pinterest_link | json }},
+      {{ settings.social_instagram_link | json }},
+      {{ settings.social_tumblr_link | json }},
+      {{ settings.social_snapchat_link | json }},
+      {{ settings.social_youtube_link | json }},
+      {{ settings.social_vimeo_link | json }}
+    ],
+    "url": {{ shop.url | append: page.url | json }}
+  }
+</script>
+
+{%- if request.page_type == 'index' -%}
+  {% assign potential_action_target = shop.url | append: routes.search_url | append: "?q={search_term_string}" %}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebSite",
+      "name": {{ shop.name | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {{ potential_action_target | json }},
+        "query-input": "required name=search_term_string"
+      },
+      "url": {{ shop.url | append: page.url | json }}
+    }
+  </script>
+{%- endif -%}
+<style>
+  .sp-header {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    border-bottom: 1px solid var(--main-color);
+    padding: 1rem;
+    background-color: var(--base-color);
+  }
+  .sp-header-logo {
+    width: 250px;
+    display: flex;
+    align-items: center;
+  }
+  .sp-header a img {
+    width: 100%;
+  }
+  .sp-header a {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    text-decoration: none;
+    font-size: var(--font-size-m);
+    font-style: italic;
+    color: var(--main-color);
+  }
+  .sp-cart-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .sp-header-search {
+    width: 200px;
+    height: 50px;
+    border: 1px solid var(--main-color);
+    border-radius: 10px;
+  }
+  .sp-header-search .field {
+    width: 100%;
+    display: flex;
+    border: none;
+    height: 100%;
+    background-color: none;
+  }
+  ::placeholder {
+  color: var(--main-color);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: var(--font-size-m);
+  } 
+  .sp-header-search .field input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    color: var(--main-color);
+    background-color: none;
+    border-radius: 10px;
+    padding-left: 10px;
+  }
+  .sp-header-search .field button {
+    width: 20%;
+    height: 100%;
+    border: none;
+    background-color: none;
+    background: none;
+    border-radius: 10px;
+  }
+  .sp-header-search .field svg {
+    width: 25px;
+    height: 100%;
+    color: var(--main-color);
+  }
+</style>
+
+{% schema %}
+{
+  "name": "t:sections.header.name",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "t:sections.header.settings.logo.label"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 50,
+      "max": 250,
+      "step": 10,
+      "default": 100,
+      "unit": "t:sections.header.settings.logo_width.unit",
+      "label": "t:sections.header.settings.logo_width.label"
+    },
+    {
+      "type": "select",
+      "id": "logo_position",
+      "options": [
+        {
+          "value": "middle-left",
+          "label": "t:sections.header.settings.logo_position.options__1.label"
+        },
+        {
+          "value": "top-left",
+          "label": "t:sections.header.settings.logo_position.options__2.label"
+        },
+        {
+          "value": "top-center",
+          "label": "t:sections.header.settings.logo_position.options__3.label"
+        }
+      ],
+      "default": "middle-left",
+      "label": "t:sections.header.settings.logo_position.label"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "t:sections.header.settings.menu.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_line_separator",
+      "default": true,
+      "label": "t:sections.header.settings.show_line_separator.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky_header",
+      "default": true,
+      "label": "t:sections.header.settings.enable_sticky_header.label",
+      "info": "t:sections.header.settings.enable_sticky_header.info"
+    }
+  ]
+}
+{% endschema %}
+
+<!-- <script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
+
+<header>
+  <a href="http://127.0.0.1:9292/products/example-shirt?variant=40336908746910">product</a>
+<a href="/cart">cart</a>
+</header> -->

@@ -1,0 +1,96 @@
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+{%- assign product_form_id = 'product-form-' | append: section.id -%}
+
+<div id="ProductInfo-{{ section.id }}">
+  <h1 class="headline l">{{ product.title | escape }}</h1>
+  {%- if product.metafields.custom_fields.subtitle != blank -%}
+  <p class="product_subtitle">
+    {{ product.metafields.custom_fields.subtitle }}
+  </p>
+  {%- else -%}
+  <p class="product_subtitle s">Sweet Pickle Books</p>
+{%- endif -%}
+{% if product.description != blank %}
+<div class="product__description">{{ product.description }}</div>
+{% endif %}
+
+<variant-radios class="no-js-hidden size-variants" data-section="{{ section.id }}" data-url="{{ product.url }}" {{ block.shopify_attributes }}>
+  {%- for option in product.options_with_values -%}
+      <fieldset class="js product-form__input">
+        <!-- <legend class="form__label">{{ option.name }}</legend> -->
+        {%- for value in option.values -%}
+          <input type="radio" id="{{ section.id }}-{{ option.name }}-{{ forloop.index0 }}"
+                name="{{ option.name }}"
+                value="{{ value | escape }}"
+                form="product-form-{{ section.id }}"
+                {% if option.selected_value == value %}checked{% endif %}
+          >
+          <label for="{{ section.id }}-{{ option.name }}-{{ forloop.index0 }}">
+            {{ value }}
+          </label>
+        {%- endfor -%}
+      </fieldset>
+  {%- endfor -%}
+  <script type="application/json">
+    {{ product.variants | json }}
+  </script>
+</variant-radios>
+<div class="product-form__input product-form__quantity" {{ block.shopify_attributes }}>
+  <label class="form__label quantity-label" for="Quantity-{{ section.id }}">
+    Quantity
+  </label>
+  <quantity-input class="quantity">
+    <button class="quantity__button no-js-hidden" name="minus" type="button">-</button>
+    <input class="quantity__input"
+        type="number"
+        name="quantity"
+        id="Quantity-{{ section.id }}"
+        min="1"
+        value="1"
+        form="product-form-{{ section.id }}"
+      >
+    <button class="quantity__button no-js-hidden" name="plus" type="button">+</button>
+  </quantity-input>
+</div>
+
+<product-form class="product-form">
+  {%- form 'product', product, id: product_form_id, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+    <div class="product-form__buttons">
+      <button
+        type="submit"
+        name="add"
+        class="product-form__submit button"
+      {% if product.selected_or_first_available_variant.available == false %}disabled{% endif %}
+      >
+          {%- if product.selected_or_first_available_variant.available -%}
+          Add to cart
+          {%- else -%}
+            Sold out
+          {%- endif -%}
+      </button>
+      <!-- Buy it now -->
+        <!-- {{ form | payment_button }} -->
+    </div>
+  {%- endform -%}
+</product-form>
+<ul>
+  <li>other info</li>
+  <li>for merch product</li>
+  <li>such as a size chart</li>
+</ul>
+</div>
+<div class="main-image">
+  <img src="{{ product.featured_media | image_url }}" alt="{{ product.title }}">
+</div>
+{%- render 'cart-notification' -%}
+
+<style>
+  .product_subtitle {
+    font-family: var(--sans);
+    font-weight: normal;
+    text-transform: uppercase;
+    margin: 0;
+    margin-left: 2rem;
+  }
+</style>

@@ -1,7 +1,7 @@
 {
   "sections": {
     "main": {
-      "type": "placeholder"
+      "type": "blog-list"
     }
   },
   "order": [
