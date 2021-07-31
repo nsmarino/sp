@@ -161,6 +161,14 @@ fieldset {
   font-style: italic;
   font-weight: normal;
   margin: 0;
+  text-transform: initial;
+}
+.blocky {
+  font-family: var(--sans);
+  font-style: normal;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
 }
 
 /* Sticky header */
