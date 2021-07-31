@@ -1,0 +1,19 @@
+<a href="{{article.url}}" class="blog-card">
+<img class="blog-card-image" src="{{article.image  | image_url }}" alt="{{article.title}}">
+<div>
+  <p>{{ article.created_at | date: format: 'abbreviated_date' }}</p>
+  <h2 class="headline l">{{article.title}}</h2>
+  <p>{{article.excerpt}}...</p>
+</div>
+</a>
+<style>
+.blog-card {
+  display: flex;
+}
+.blog-card-image {
+  width: calc(100vw / 4);
+  padding: var(--spacing-s);
+  border-radius: 46px;
+}
+
+</style>

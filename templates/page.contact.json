@@ -2,9 +2,13 @@
   "sections": {
     "landing": {
       "type": "form-landing"
+    },
+    "form": {
+      "type": "request-form"
     }
   },
   "order": [
-    "landing"
+    "landing",
+    "form"
   ]
 }

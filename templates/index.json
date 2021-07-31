@@ -2,9 +2,13 @@
   "sections": {
     "landing": {
       "type": "landing"
+    },
+    "collections": {
+      "type": "collection-cards"
     }
   },
   "order": [
-    "landing"
+    "landing",
+    "collections"
   ]
 }

@@ -1,0 +1,166 @@
+
+  {%- form 'contact', id: 'ContactForm' -%}
+  {%- if form.posted_successfully? -%}
+    <div class="form-status form-status-list form__message" tabindex="-1" autofocus>{% render 'icon-success' %} {{ 'templates.contact.form.post_success' | t }}</div>
+  {%- elsif form.errors -%}
+    <div class="form__message">
+      <h2 class="form-status caption-large" role="alert" tabindex="-1" autofocus>{% render 'icon-error' %} {{ 'templates.contact.form.error_heading' | t }}</h2>
+    </div>
+    <ul class="form-status-list caption-large" role="list">
+      <li>
+        <a href="#ContactForm-email" class="link">
+          {{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}
+        </a>
+      </li>
+    </ul>
+  {%- endif -%}
+
+  <div class="field">      
+    <label class="headline l" for="ContactForm-email">Your Email*</label>
+    <input type="email" class="field__input" autocomplete="email" name="contact" value="" placeholder="Your Answer">
+  </div>
+
+  <div class="field">   
+    <label class="headline l">What book(s) can we help you find?*
+      <span>Please put any helpful information here: author, title, edition, format, etc.</span>
+    </label>
+    <input 
+      type="text" 
+      class="field__input" 
+      name="contact" value="" 
+      placeholder="Your Answer"
+    >
+  </div>
+
+  <div class="field">
+    <label class="headline l">What is your budget?</label>
+    <input 
+      type="text" 
+      class="field__input" 
+      name="contact" 
+      value="" 
+      placeholder="Your Answer"
+    > 
+  </div>
+
+  <fieldset class="shipping-type-wrapper">
+    <p class="headline l">Shipping or in-store pickup?*</p>
+
+    <div>
+      <input type="radio" id="in-store"
+        name="shipping-type"
+        value=""
+        form=""
+      >
+      <label for="in-store">I'll pick this up in store at 47 Orchard Street</label>
+    </div>
+
+    <div>
+      <input type="radio" id="please-ship"
+        name="shipping-type"
+        value=""
+        form="{{ form }}"
+      >
+      <label for="please-ship">Please ship this to me</label>
+    </div>
+
+  </fieldset>
+
+  <div class="field">      
+    <label class="headline l">If you chose SHIP, please provide your mailing address:*</label>
+    <input 
+      type="text" 
+      class="field__input" 
+      name="contact" 
+      value="" 
+      placeholder="Your Answer"
+    >
+  </div>
+
+  <div class="field">
+    <label class="headline l">Name*</label> 
+    <input 
+      type="text" 
+      class="field__input" 
+      name="contact" 
+      value="" 
+      placeholder="Your Answer"
+    >   
+  </div>
+
+  <div class="field">      
+    <label class="headline l">Phone Number*</label> 
+    <input 
+      type="text" 
+      class="field__input" 
+      name="contact" 
+      value="" 
+      placeholder="Your Answer"
+    >
+  </div>
+
+  <div class="field">      
+    <label class="headline l">Questions & Comments</label> 
+    <input 
+      type="text" 
+      class="field__input" 
+      name="contact" 
+      value="" 
+      placeholder="Your Answer"
+    >
+  </div>
+
+  <div class="contact__button">
+    <button type="submit" class="primary-btn">Submit Form</button>
+  </div>
+{%- endform -%}
+<style>
+::placeholder {
+  text-transform: uppercase;
+  font-family: var(--mono);
+  color: #C4C4C4;
+  font-style: normal;
+  font-size: var(--font-size-s);
+}
+#ContactForm {
+padding-left: 10%;
+margin: 0 auto;
+}
+
+#ContactForm label span {
+font-family: var(--mono);
+font-style: normal;
+color: var(--main-color);
+text-transform: uppercase;
+font-size: 16px;
+display: block
+}
+#ContactForm input[type=text], #ContactForm input[type=email] {
+  display: block;
+  border: none;
+  margin-top: var(--spacing-s);
+  margin-bottom: var(--spacing-s);
+  margin-left: var(--spacing-m);
+  width: calc(100% - var(--spacing-m));
+
+  padding-bottom: 0.5rem;
+  background-color: var(--base-color);
+  border-bottom: var(--simple-border);
+}
+
+#ContactForm .shipping-type-wrapper  {
+  display: flex;
+  flex-direction: column;
+  border-bottom: var(--simple-border);
+  margin-bottom: 2rem;
+}
+
+#ContactForm .shipping-type-wrapper label  {
+  font-family: var(--mono);
+  text-transform: uppercase;
+}
+
+.contact__button {
+  text-align: right;
+}
+</style>

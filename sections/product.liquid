@@ -1,96 +1,189 @@
 <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
 {%- assign product_form_id = 'product-form-' | append: section.id -%}
 
-<div id="ProductInfo-{{ section.id }}">
-  <h1 class="headline l">{{ product.title | escape }}</h1>
-  {%- if product.metafields.custom_fields.subtitle != blank -%}
-  <p class="product_subtitle">
-    {{ product.metafields.custom_fields.subtitle }}
-  </p>
-  {%- else -%}
-  <p class="product_subtitle s">Sweet Pickle Books</p>
-{%- endif -%}
-{% if product.description != blank %}
-<div class="product__description">{{ product.description }}</div>
-{% endif %}
+<div class="flex-row product-container">
+  <div id="ProductInfo-{{ section.id }}" class="product-info">
+    <div class="main-product-info">
+      <h1 class="headline l">{{ product.title | escape }}</h1>
 
-<variant-radios class="no-js-hidden size-variants" data-section="{{ section.id }}" data-url="{{ product.url }}" {{ block.shopify_attributes }}>
-  {%- for option in product.options_with_values -%}
-      <fieldset class="js product-form__input">
-        <!-- <legend class="form__label">{{ option.name }}</legend> -->
-        {%- for value in option.values -%}
-          <input type="radio" id="{{ section.id }}-{{ option.name }}-{{ forloop.index0 }}"
-                name="{{ option.name }}"
-                value="{{ value | escape }}"
-                form="product-form-{{ section.id }}"
-                {% if option.selected_value == value %}checked{% endif %}
-          >
-          <label for="{{ section.id }}-{{ option.name }}-{{ forloop.index0 }}">
-            {{ value }}
+      {%- if product.metafields.custom_fields.subtitle != blank -%}
+        <p class="product-subtitle s">
+          {{ product.metafields.custom_fields.subtitle }}
+        </p>
+      {%- else -%}
+        <p class="product-subtitle s">Sweet Pickle Books</p>
+      {%- endif -%}
+
+      {% if product.description != blank %}
+        <div class="product-description">{{ product.description }}</div>
+      {% endif %}
+
+      {%- unless product.has_only_default_variant -%}
+        <variant-radios class="no-js-hidden size-variants" data-section="{{ section.id }}" data-url="{{ product.url }}" {{ block.shopify_attributes }}>
+          {%- for option in product.options_with_values -%}
+              <fieldset class="js product-form__input">
+                <!-- <legend class="form__label">{{ option.name }}</legend> -->
+                {%- for value in option.values -%}
+                  <input type="radio" id="{{ section.id }}-{{ option.name }}-{{ forloop.index0 }}"
+                        name="{{ option.name }}"
+                        value="{{ value | escape }}"
+                        form="product-form-{{ section.id }}"
+                        {% if option.selected_value == value %}checked{% endif %}
+                  >
+                  <label for="{{ section.id }}-{{ option.name }}-{{ forloop.index0 }}">
+                    {{ value }}
+                  </label>
+                {%- endfor -%}
+              </fieldset>
+          {%- endfor -%}
+          <script type="application/json">
+            {{ product.variants | json }}
+          </script>
+        </variant-radios>
+      {%- endunless -%}
+
+      <script>
+        console.log(`{{product.first_available_variant | json }}`)
+      </script>
+
+      {% unless product.first_available_variant.inventory_quantity == 1  %}
+        <div class="quantity-wrapper">
+          <label class="quantity-label" for="Quantity-{{ section.id }}">
+            Quantity
           </label>
-        {%- endfor -%}
-      </fieldset>
-  {%- endfor -%}
-  <script type="application/json">
-    {{ product.variants | json }}
-  </script>
-</variant-radios>
-<div class="product-form__input product-form__quantity" {{ block.shopify_attributes }}>
-  <label class="form__label quantity-label" for="Quantity-{{ section.id }}">
-    Quantity
-  </label>
-  <quantity-input class="quantity">
-    <button class="quantity__button no-js-hidden" name="minus" type="button">-</button>
-    <input class="quantity__input"
-        type="number"
-        name="quantity"
-        id="Quantity-{{ section.id }}"
-        min="1"
-        value="1"
-        form="product-form-{{ section.id }}"
-      >
-    <button class="quantity__button no-js-hidden" name="plus" type="button">+</button>
-  </quantity-input>
-</div>
+          <quantity-input class="quantity">
+            <button class="secondary-btn no-js-hidden" name="minus" type="button">-</button>
+            <input class="quantity__input"
+                type="number"
+                name="quantity"
+                id="Quantity-{{ section.id }}"
+                min="1"
+                value="1"
+                form="product-form-{{ section.id }}"
+              >
+            <button class="secondary-btn no-js-hidden" name="plus" type="button">+</button>
+          </quantity-input>
+        </div>
+      {%- endunless -%}
 
-<product-form class="product-form">
-  {%- form 'product', product, id: product_form_id, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
-    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-    <div class="product-form__buttons">
-      <button
-        type="submit"
-        name="add"
-        class="product-form__submit button"
-      {% if product.selected_or_first_available_variant.available == false %}disabled{% endif %}
-      >
-          {%- if product.selected_or_first_available_variant.available -%}
-          Add to cart
-          {%- else -%}
-            Sold out
-          {%- endif -%}
-      </button>
-      <!-- Buy it now -->
-        <!-- {{ form | payment_button }} -->
+      <product-form class="product-form">
+        {%- form 'product', product, id: product_form_id, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <div class="product-form__buttons">
+            <button
+              type="submit"
+              name="add"
+              class="product-form__submit primary-btn"
+            {% if product.selected_or_first_available_variant.available == false %}disabled{% endif %}
+            >
+                {%- if product.selected_or_first_available_variant.available -%}
+                Add to cart
+                {%- else -%}
+                  Sold out
+                {%- endif -%}
+            </button>
+            <!-- Buy it now -->
+              <!-- {{ form | payment_button }} -->
+          </div>
+        {%- endform -%}
+      </product-form>
+      <p class="price">
+      {{product.price | money_without_trailing_zeros}}
+      </p>
     </div>
-  {%- endform -%}
-</product-form>
-<ul>
-  <li>other info</li>
-  <li>for merch product</li>
-  <li>such as a size chart</li>
-</ul>
-</div>
-<div class="main-image">
-  <img src="{{ product.featured_media | image_url }}" alt="{{ product.title }}">
+
+    <ul class="metafields-list unstyled-list">
+      <li>other info</li>
+      <li>for merch product</li>
+      <li>such as a size chart</li>
+    </ul>
+
+  </div>
+
+  <div class="main-product-image">
+    <img src="{{ product.featured_media | image_url }}" alt="{{ product.title }}">
+  </div>
 </div>
 {%- render 'cart-notification' -%}
 
 <style>
-  .product_subtitle {
+  .product-container {
+    border-bottom: var(--simple-border);
+  }
+  .product-info {
+    flex-basis: 50%;
+    border-right: var(--simple-border);
+    display: flex;
+    flex-direction: column;
+
+  }
+
+  .main-product-info {
+    padding: var(--spacing-m);
+  }
+
+  .product-subtitle {
     font-family: var(--sans);
     font-weight: normal;
     text-transform: uppercase;
     margin: 0;
-    margin-left: 2rem;
+    padding-left: var(--spacing-s);
+  }
+  .product-description {
+    padding-left: var(--spacing-s);
+    margin-top: var(--spacing-s);
+    margin-bottom: var(--spacing-s);
+  }
+
+/* Variant radios */
+  .size-variants input[type="radio"] {
+    opacity: 0;
+    position: fixed;
+    width: 0;
+  }
+  .size-variants label {
+    border: 1px solid var(--main-color);
+    color: var(--main-color);
+    padding: 0.5rem;
+    border-radius: 10px;
+    margin-right: 1rem;
+    display: block;
+    text-align: center;
+    width: fit-content;
+  }
+  .size-variants input[type="radio"]:checked + label {
+    background-color:var(--main-color);
+    color:var(--base-color);
+  }
+  .size-variants input[type="radio"]:focus + label {
+      border: 2px dashed #444;
+  }
+  /* Quantity inputs */
+  .quantity-wrapper {
+    padding-left: var(--spacing-s);
+  }
+  .quantity__input {
+  width: 3rem;
+  border: none;
+  color: var(--main-color);
+}
+
+  .main-product-image {
+    background-color: var(--bg);
+    flex-basis: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .metafields-list {
+    margin-top: auto;
+  }
+  .metafields-list li {
+    border-top: 1px solid var(--main-color);
+    color: var(--main-color); 
+    font-family: var(--mono);
+    font-weight: normal;
+    font-size: var(--font-size-s);
+    padding-left: 4rem;
   }
 </style>
